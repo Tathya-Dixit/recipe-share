@@ -15,8 +15,7 @@ class Recipe(models.Model):
     updated_at = models.DateTimeField(auto_now = True)
 
     def __str__(self):
-        return self.title + "-" + self.author
-
+        return f"{self.title} - {self.author.username}" 
 
 class Review(models.Model):
     review = models.TextField(max_length=500)
@@ -29,7 +28,7 @@ class Review(models.Model):
     updated_at = models.DateTimeField(auto_now = True)
 
     def __str__(self):
-        return self.recipe + "-" +self.rating
+        return f"{self.reviewer.username} - {self.recipe.title} : {self.rating}"
 
 
 
