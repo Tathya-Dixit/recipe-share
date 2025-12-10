@@ -32,7 +32,7 @@ def registerView(request):
             messages.error(request, 'Email already registered! Try Forgot Password?')
             return render(request, 'accounts/register.html')
 
-        user = User.objects.create(
+        user = User.objects.create_user(
             username = username,
             email = email,
             password = password1
