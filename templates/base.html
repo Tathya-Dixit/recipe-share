@@ -1,0 +1,71 @@
+<!-- recipes/templates/base.html -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+    <title>{% block title %}RecipeShare{% endblock %}</title>
+</head>
+<body>
+    <div class="min-h-screen flex flex-col">
+        <nav class="w-full bg-yellow-500 shadow-lg">
+            <div class="max-w-7xl mx-auto px-4">
+                <div class="flex justify-between items-center h-16">
+                    <div>
+                        <a href="/" class="text-3xl font-bold text-red-800">Recipe Share</a>
+                    </div>
+                    
+                    <div class="flex items-center space-x-6">
+                        {% if user.is_authenticated %}
+                            <a href="/" class="text-gray-800 hover:text-red-800" title="Home">
+                                <i class="fa fa-home" style="font-size: 24px;"></i>
+                            </a>
+                            <a href="/profile/" class="text-gray-800 hover:text-red-800" title="Profile">
+                                <i class="fa fa-user-circle-o" style="font-size: 24px;"></i>
+                            </a>
+                            <a href="/logout/" class="text-gray-800 hover:text-red-800" title="Logout">
+                                <i class="fa fa-sign-out" style="font-size: 24px;"></i>
+                            </a>
+                        {% else %}
+                            <a href="/" class="text-gray-800 hover:text-red-800" title="Home">
+                                <i class="fa fa-home" style="font-size: 24px;"></i>
+                            </a>
+                            <a href="/login/" class="text-gray-800 hover:text-red-800" title="Login">
+                                <i class="fa fa-sign-in" style="font-size: 24px;"></i>
+                            </a>
+                            <a href="/register/" class="bg-red-800 text-white px-4 py-2 rounded hover:bg-red-900">
+                                Sign Up
+                            </a>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+        </nav>
+
+        {% if messages %}
+            <div class="max-w-7xl mx-auto px-4 mt-4 w-full">
+                {% for message in messages %}
+                    <div class="{% if message.tags == 'error' %}bg-red-100 border-red-400 text-red-700{% elif message.tags == 'success' %}bg-green-100 border-green-400 text-green-700{% else %}bg-blue-100 border-blue-400 text-blue-700{% endif %} border px-4 py-3 rounded mb-4">
+                        {{ message }}
+                    </div>
+                {% endfor %}
+            </div>
+        {% endif %}
+
+        <main class="flex-grow w-full bg-gray-100 py-8">
+            <div class="max-w-7xl mx-auto px-4">
+                {% block content %}
+                {% endblock content %}
+            </div>
+        </main>
+
+        <footer class="w-full bg-black py-6">
+            <div class="max-w-7xl mx-auto px-4">
+                <h1 class="text-2xl text-white text-center">RecipeShare &copy; 2024</h1>
+            </div>
+        </footer>
+    </div>
+</body>
+</html>

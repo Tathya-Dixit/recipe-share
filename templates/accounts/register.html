@@ -1,0 +1,78 @@
+{% extends 'base.html' %}
+
+{% block title %}Sign Up - RecipeShare{% endblock %}
+
+{% block content %}
+<div class="max-w-md mx-auto bg-white rounded-lg shadow-lg p-8">
+    <h2 class="text-3xl font-bold text-center text-red-800 mb-6">Create Account</h2>
+    
+    <form method="POST">
+        {% csrf_token %}
+        
+        <div class="mb-4">
+            <label class="block text-gray-700 font-bold mb-2">
+                <i class="fa fa-user"></i> Username
+            </label>
+            <input 
+                type="text" 
+                name="username" 
+                required
+                class="w-full px-4 py-2 border rounded-lg focus:outline-none focus:border-yellow-500"
+                placeholder="Choose a username"
+            >
+        </div>
+        
+        <div class="mb-4">
+            <label class="block text-gray-700 font-bold mb-2">
+                <i class="fa fa-envelope"></i> Email
+            </label>
+            <input 
+                type="email" 
+                name="email" 
+                required
+                class="w-full px-4 py-2 border rounded-lg focus:outline-none focus:border-yellow-500"
+                placeholder="your@email.com"
+            >
+        </div>
+        
+        <div class="mb-4">
+            <label class="block text-gray-700 font-bold mb-2">
+                <i class="fa fa-lock"></i> Password
+            </label>
+            <input 
+                type="password" 
+                name="password1" 
+                required
+                class="w-full px-4 py-2 border rounded-lg focus:outline-none focus:border-yellow-500"
+                placeholder="Enter password"
+            >
+                <p class="text-sm text-gray-500 mt-1">Must be at least 8 characters</p>
+        </div>
+        
+        <div class="mb-6">
+            <label class="block text-gray-700 font-bold mb-2">
+                <i class="fa fa-lock"></i> Confirm Password
+            </label>
+            <input 
+                type="password" 
+                name="password2" 
+                required
+                class="w-full px-4 py-2 border rounded-lg focus:outline-none focus:border-yellow-500"
+                placeholder="Confirm password"
+            >
+        </div>
+        
+        <button 
+            type="submit"
+            class="w-full bg-yellow-500 text-red-800 py-3 px-4 rounded-lg hover:bg-yellow-600 font-bold text-lg"
+        >
+            <i class="fa fa-user-plus"></i> Sign Up
+        </button>
+    </form>
+    
+    <p class="text-center mt-4 text-gray-600">
+        Already have an account? 
+        <a href="/login/" class="text-red-800 hover:underline font-bold">Login</a>
+    </p>
+</div>
+{% endblock %}

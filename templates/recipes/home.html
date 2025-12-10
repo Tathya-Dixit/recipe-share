@@ -1,0 +1,16 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="text-center py-12">
+    <h1 class="text-5xl font-bold text-red-800 mb-4">Welcome to RecipeShare</h1>
+    
+    {% if user.is_authenticated %}
+        <p class="text-xl text-gray-700">Hello, <span class="font-bold">{{ user.username }}</span>!</p>
+    {% else %}
+        <p class="text-xl text-gray-600 mb-8">Sign up to start sharing recipes</p>
+        <a href="/register/" class="bg-yellow-500 text-red-800 px-8 py-3 rounded-lg font-bold hover:bg-yellow-600">
+            Get Started
+        </a>
+    {% endif %}
+</div>
+{% endblock %}
