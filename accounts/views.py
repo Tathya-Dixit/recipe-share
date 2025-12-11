@@ -6,6 +6,9 @@ from accounts.models import User
 
 
 def registerView(request):
+    if request.user.is_authenticated:
+        return redirect('home_page')
+
     if request.method == 'POST':
         username = request.POST.get('username')
         email = request.POST.get('email')
@@ -44,6 +47,8 @@ def registerView(request):
 
 
 def loginView(request):
+    if request.user.is_authenticated:
+        return redirect('home_page')
     if request.method == 'POST':
         username = request.POST.get('username')
         password = request.POST.get('password')
