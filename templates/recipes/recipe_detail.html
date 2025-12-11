@@ -1,0 +1,190 @@
+{% extends 'base.html' %}
+
+{% block title %}{{ recipe.title }} - RecipeShare{% endblock %}
+
+{% block content %}
+<div class="max-w-4xl mx-auto">
+    <a href="/" class="text-red-800 hover:underline mb-4 inline-block">
+        <i class="fa fa-arrow-left"></i> Back to Recipes
+    </a>
+    
+    <div class="bg-white rounded-lg shadow-lg overflow-hidden mb-6">
+        {% if recipe.image %}
+            <img src="{{ recipe.image.url }}" alt="{{ recipe.title }}" class="w-full h-96 object-cover">
+        {% else %}
+            <div class="w-full h-96 bg-gradient-to-br from-yellow-400 to-red-600 flex items-center justify-center">
+                <i class="fa fa-cutlery text-white" style="font-size: 96px;"></i>
+            </div>
+        {% endif %}
+        
+        <div class="p-8">
+            <h1 class="text-4xl font-bold text-red-800 mb-4">{{ recipe.title }}</h1>
+            <p class="text-gray-700 text-lg mb-6">{{ recipe.small_description }}</p>
+            
+            <div class="flex flex-wrap gap-6 text-gray-600 mb-6">
+                <div class="flex items-center">
+                    <i class="fa fa-clock-o text-yellow-500 mr-2" style="font-size: 20px;"></i>
+                    <span class="font-bold">{{ recipe.estimated_prep_time }}</span>
+                </div>
+                <div class="flex items-center">
+                    <i class="fa fa-star text-yellow-500 mr-2" style="font-size: 20px;"></i>
+                    <span class="font-bold">{{ average_rating }} / 5</span>
+                    <span class="ml-2 text-gray-500">({{ total_reviews }} reviews)</span>
+                </div>
+                <div class="flex items-center">
+                    <i class="fa fa-user-circle text-yellow-500 mr-2" style="font-size: 20px;"></i>
+                    <span>By <span class="font-bold">{{ recipe.author.username }}</span></span>
+                </div>
+                <div class="flex items-center">
+                    <i class="fa fa-calendar text-yellow-500 mr-2" style="font-size: 20px;"></i>
+                    <span>{{ recipe.created_at|date:"M d, Y" }}</span>
+                </div>
+            </div>
+            
+            {% if user.is_authenticated and user == recipe.author %}
+                <div class="flex gap-3 mb-6">
+                    <a href="/recipes/{{ recipe.id }}/edit/" class="bg-blue-500 text-white px-6 py-2 rounded-lg font-bold hover:bg-blue-600">
+                        <i class="fa fa-edit"></i> Edit Recipe
+                    </a>
+                    <a href="/recipes/{{ recipe.id }}/delete/" class="bg-red-600 text-white px-6 py-2 rounded-lg font-bold hover:bg-red-700">
+                        <i class="fa fa-trash"></i> Delete Recipe
+                    </a>
+                </div>
+            {% endif %}
+        </div>
+    </div>
+    
+    <div class="bg-white rounded-lg shadow-lg p-8 mb-6">
+        <h2 class="text-3xl font-bold text-red-800 mb-4 flex items-center">
+            <i class="fa fa-list-ul mr-3"></i> Ingredients
+        </h2>
+        <div class="bg-yellow-50 p-6 rounded-lg">
+            <ul class="space-y-2">
+                {% for ingredient in recipe.ingredients_list.splitlines %}
+                    {% if ingredient.strip %}
+                        <li class="flex items-start">
+                            <i class="fa fa-check-circle text-yellow-500 mr-3 mt-1"></i>
+                            <span class="text-gray-700">{{ ingredient }}</span>
+                        </li>
+                    {% endif %}
+                {% endfor %}
+            </ul>
+        </div>
+    </div>
+    
+    <div class="bg-white rounded-lg shadow-lg p-8 mb-6">
+        <h2 class="text-3xl font-bold text-red-800 mb-4 flex items-center">
+            <i class="fa fa-tasks mr-3"></i> Instructions
+        </h2>
+        <div class="space-y-4">
+            {% for step in recipe.process.splitlines %}
+                {% if step.strip %}
+                    <div class="flex items-start">
+                        <div class="bg-yellow-500 text-red-800 font-bold rounded-full w-8 h-8 flex items-center justify-center mr-4 flex-shrink-0">
+                            {{ forloop.counter }}
+                        </div>
+                        <p class="text-gray-700 pt-1">{{ step }}</p>
+                    </div>
+                {% endif %}
+            {% endfor %}
+        </div>
+    </div>
+    
+    <div class="bg-white rounded-lg shadow-lg p-8">
+        <h2 class="text-3xl font-bold text-red-800 mb-6 flex items-center">
+            <i class="fa fa-comments mr-3"></i> Reviews ({{ total_reviews }})
+        </h2>
+        
+        {% if user.is_authenticated %}
+            {% if not user_has_reviewed and user != recipe.author %}
+                <div class="bg-yellow-50 p-6 rounded-lg mb-6">
+                    <h3 class="text-xl font-bold text-red-800 mb-4">Leave a Review</h3>
+                    <form method="POST" action="/recipes/{{ recipe.id }}/review/">
+                        {% csrf_token %}
+                        
+                        <div class="mb-4">
+                            <label class="block text-gray-700 font-bold mb-2">Rating</label>
+                            <div class="flex gap-2">
+                                {% for i in "12345" %}
+                                    <label class="cursor-pointer">
+                                        <input type="radio" name="rating" value="{{ i }}" required class="hidden peer">
+                                        <i class="fa fa-star text-gray-300 peer-checked:text-yellow-500 hover:text-yellow-400" style="font-size: 32px;"></i>
+                                    </label>
+                                {% endfor %}
+                            </div>
+                        </div>
+                        
+                        <div class="mb-4">
+                            <label class="block text-gray-700 font-bold mb-2">Your Review</label>
+                            <textarea 
+                                name="review" 
+                                rows="4" 
+                                class="w-full px-4 py-2 border rounded-lg focus:outline-none focus:border-yellow-500"
+                                placeholder="Share your experience with this recipe..."
+                            ></textarea>
+                        </div>
+                        
+                        <button type="submit" class="bg-yellow-500 text-red-800 px-6 py-3 rounded-lg font-bold hover:bg-yellow-600">
+                            <i class="fa fa-paper-plane"></i> Submit Review
+                        </button>
+                    </form>
+                </div>
+            {% elif user == recipe.author %}
+                <p class="text-gray-600 bg-gray-100 p-4 rounded-lg mb-6">
+                    <i class="fa fa-info-circle"></i> You can't review your own recipe.
+                </p>
+            {% else %}
+                <p class="text-gray-600 bg-gray-100 p-4 rounded-lg mb-6">
+                    <i class="fa fa-check-circle text-green-600"></i> You've already reviewed this recipe.
+                </p>
+            {% endif %}
+        {% else %}
+            <div class="bg-yellow-100 border-l-4 border-yellow-500 p-4 mb-6">
+                <p class="text-yellow-700">
+                    <i class="fa fa-sign-in"></i>
+                    <a href="/login/" class="font-bold underline">Login</a> to leave a review!
+                </p>
+            </div>
+        {% endif %}
+        
+        {% if reviews %}
+            <div class="space-y-4">
+                {% for review in reviews %}
+                    <div class="border-b pb-4">
+                        <div class="flex items-center justify-between mb-2">
+                            <div class="flex items-center">
+                                <div class="w-10 h-10 bg-yellow-500 rounded-full flex items-center justify-center text-red-800 font-bold mr-3">
+                                    {{ review.reviewer.username|first|upper }}
+                                </div>
+                                <div>
+                                    <p class="font-bold text-gray-800">{{ review.reviewer.username }}</p>
+                                    <p class="text-sm text-gray-500">{{ review.created_at|date:"M d, Y" }}</p>
+                                </div>
+                            </div>
+                            <div class="flex items-center">
+                                {% for i in "12345" %}
+                                    <i class="fa fa-star {% if i <= review.rating|stringformat:'s' %}text-yellow-500{% else %}text-gray-300{% endif %}"></i>
+                                {% endfor %}
+                            </div>
+                        </div>
+                        {% if review.review %}
+                            <p class="text-gray-700 ml-13">{{ review.review }}</p>
+                        {% endif %}
+                        
+                        {% if user == review.reviewer %}
+                            <form method="POST" action="/recipes/{{ recipe.id }}/review/delete/" class="mt-2">
+                                {% csrf_token %}
+                                <button type="submit" class="text-red-600 hover:underline text-sm">
+                                    <i class="fa fa-trash"></i> Delete my review
+                                </button>
+                            </form>
+                        {% endif %}
+                    </div>
+                {% endfor %}
+            </div>
+        {% else %}
+            <p class="text-gray-500 text-center py-8">No reviews yet. Be the first to review this recipe!</p>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}

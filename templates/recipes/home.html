@@ -1,16 +1,66 @@
 {% extends 'base.html' %}
 
+{% block title %}Recipe Feed - RecipeShare{% endblock %}
+
 {% block content %}
-<div class="text-center py-12">
-    <h1 class="text-5xl font-bold text-red-800 mb-4">Welcome to RecipeShare</h1>
-    
-    {% if user.is_authenticated %}
-        <p class="text-xl text-gray-700">Hello, <span class="font-bold">{{ user.username }}</span>!</p>
-    {% else %}
-        <p class="text-xl text-gray-600 mb-8">Sign up to start sharing recipes</p>
-        <a href="/register/" class="bg-yellow-500 text-red-800 px-8 py-3 rounded-lg font-bold hover:bg-yellow-600">
-            Get Started
-        </a>
-    {% endif %}
+<div class="mb-8">
+    <h1 class="text-5xl font-bold text-red-800 mb-2">Discover Recipes</h1>
+    <p class="text-gray-600 text-lg">{{ total_recipes }} delicious recipes shared by our community</p>
 </div>
+
+
+{% if recipes %}
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+        {% for recipe in recipes %}
+            <div class="bg-white rounded-lg shadow-lg overflow-hidden hover:shadow-2xl transition transform hover:-translate-y-1">
+                {% if recipe.image %}
+                    <img src="{{ recipe.image.url }}" alt="{{ recipe.title }}" class="w-full h-56 object-cover">
+                {% else %}
+                    <div class="w-full h-56 bg-gradient-to-br from-yellow-400 to-red-600 flex items-center justify-center">
+                        <i class="fa fa-cutlery text-white" style="font-size: 64px;"></i>
+                    </div>
+                {% endif %}
+                
+                <div class="p-5">
+                    <h3 class="font-bold text-2xl mb-2 text-red-800">{{ recipe.title }}</h3>
+                    <p class="text-gray-600 text-sm mb-4">{{ recipe.small_description|truncatewords:20 }}</p>
+                    
+                    <div class="flex items-center justify-between text-sm text-gray-500 mb-4">
+                        <span class="flex items-center">
+                            <i class="fa fa-clock-o mr-1"></i> {{ recipe.estimated_prep_time }}
+                        </span>
+                        <span class="flex items-center">
+                            <i class="fa fa-star text-yellow-500 mr-1"></i> 
+                            {{ recipe.average_rating }} ({{ recipe.total_reviews }})
+                        </span>
+                    </div>
+                    
+                    <div class="flex items-center justify-between border-t pt-3">
+                        <span class="text-sm text-gray-600">
+                            <i class="fa fa-user-circle"></i> {{ recipe.author.username }}
+                        </span>
+                        <a href="/recipes/{{ recipe.id }}/" class="bg-yellow-500 text-red-800 px-4 py-2 rounded font-bold hover:bg-yellow-600 transition">
+                            View Recipe
+                        </a>
+                    </div>
+                </div>
+            </div>
+        {% endfor %}
+    </div>
+{% else %}
+    <div class="text-center py-20 bg-white rounded-lg shadow-lg">
+        <i class="fa fa-cutlery text-gray-300" style="font-size: 96px;"></i>
+        <h2 class="text-3xl font-bold text-gray-700 mt-6 mb-4">No recipes yet!</h2>
+        <p class="text-gray-600 mb-6">Be the first to share a delicious recipe with the community.</p>
+        {% if user.is_authenticated %}
+            <a href="/recipes/create/" class="bg-yellow-500 text-red-800 px-8 py-3 rounded-lg font-bold hover:bg-yellow-600 inline-block">
+                <i class="fa fa-plus-circle"></i> Create First Recipe
+            </a>
+        {% else %}
+            <a href="/register/" class="bg-yellow-500 text-red-800 px-8 py-3 rounded-lg font-bold hover:bg-yellow-600 inline-block">
+                <i class="fa fa-user-plus"></i> Sign Up to Get Started
+            </a>
+        {% endif %}
+    </div>
+{% endif %}
 {% endblock %}
