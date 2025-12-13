@@ -3,6 +3,7 @@ from django.contrib.auth.decorators import login_required
 from django.contrib import messages
 
 from recipes.models import Recipe, Review
+from recipes.forms import RecipeForm
 
 def homeView(request):
     recipes = Recipe.objects.all()
@@ -74,4 +75,65 @@ def deleteReviewView(request, recipe_id):
         messages.error(request, 'Review not found!')
     
     return redirect('recipe_detail', recipe_id = recipe_id)
+
+
+@login_required
+def createRecipeView(request):
+    if request.method == 'POST':
+        recipe_form = RecipeForm(request.POST, request.FILES)
+
+        if recipe_form.is_valid():
+            recipe = recipe_form.save(commit = False)
+            recipe.author = request.user
+            recipe.save()
+
+            messages.success(request, 'Your Recipe has been successfully submitted. It will be published once it is verified.')#will add verification functionality later on when mvp is working
+            return redirect('recipe_detail', recipe_id = recipe.id)
+        else:
+            messages.error(request, 'Please fix the errors highlighted in red below.')
+    else:
+        recipe_form = RecipeForm()
     
+    return render(request, 'recipes/recipe_form.html',{'form': recipe_form})
+
+
+@login_required
+def editRecipeView(request, recipe_id):
+    recipe = get_object_or_404(Recipe, id = recipe_id)
+
+    if request.user != recipe.author:
+        messages.error(request, "You shouldn't try to edit someone else's recipe. This is forbidden on this safe platform.")
+        return redirect('recipe_detail', recipe_id = recipe_id)
+    
+    if request.method == 'POST':
+        recipe_form = RecipeForm(request.POST, request.FILES, instance = recipe)
+
+        if recipe_form.is_valid():
+            recipe_form.save()
+            messages.success(request, 'Recipe Successfully Edited!')
+            return redirect('recipe_detail', recipe_id = recipe_id)
+    else:
+        recipe_form = RecipeForm(instance = recipe)
+    
+    context = {
+        'form': recipe_form,
+        'recipe': recipe,
+        'is_edit': True
+    }
+    return render(request, 'recipes/recipe_form.html', context)
+
+
+@login_required
+def deleteRecipeView(request, recipe_id):
+    recipe = get_object_or_404(Recipe, id = recipe_id) 
+
+    if request.user != recipe.author:
+        messages.error(request, "You shouldn't try to edit someone else's recipe. This is forbidden on this safe platform.")
+        return redirect('recipe_detail', recipe_id = recipe_id)
+
+    if request.method == 'POST':
+        recipe.delete()
+        messages.success(request, 'Recipe Deleted Successfully!')
+        return redirect('home_page')
+    return render(request, 'recipes/recipe_confirm_delete.html', {'recipe' : recipe})
+

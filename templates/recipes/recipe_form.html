@@ -1,0 +1,131 @@
+{% extends 'base.html' %}
+
+{% block title %}{% if is_edit %}Edit{% else %}Create{% endif %} Recipe - RecipeShare{% endblock %}
+
+{% block content %}
+<div class="max-w-3xl mx-auto">
+    <div class="bg-white rounded-lg shadow-lg p-8">
+        <h1 class="text-4xl font-bold text-red-800 mb-6">
+            {% if is_edit %}
+                <i class="fa fa-edit"></i> Edit Recipe
+            {% else %}
+                <i class="fa fa-plus-circle"></i> Create New Recipe
+            {% endif %}
+        </h1>
+        
+        <form method="POST" enctype="multipart/form-data">
+            {% csrf_token %}
+            
+            {% if form.non_field_errors %}
+                <div class="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded mb-4">
+                    {{ form.non_field_errors }}
+                </div>
+            {% endif %}
+            
+            <div class="mb-6">
+                <label class="block text-gray-700 font-bold mb-2">
+                    <i class="fa fa-cutlery"></i> {{ form.title.label }} *
+                </label>
+                {{ form.title }}
+                {% if form.title.errors %}
+                    <p class="text-red-600 text-sm mt-1">{{ form.title.errors.0 }}</p>
+                {% endif %}
+            </div>
+            
+            <div class="mb-6">
+                <label class="block text-gray-700 font-bold mb-2">
+                    <i class="fa fa-camera"></i> {{ form.image.label }} {% if not is_edit %}*{% endif %}
+                </label>
+                
+                {% if is_edit and recipe.image %}
+                    <div class="mb-3">
+                        <p class="text-sm text-gray-600 mb-2">Current image:</p>
+                        <img src="{{ recipe.image.url }}" alt="{{ recipe.title }}" class="w-48 h-48 object-cover rounded-lg border-2 border-yellow-500">
+                        <p class="text-sm text-gray-500 mt-2">Upload a new image to replace it (optional)</p>
+                    </div>
+                {% endif %}
+                
+                {{ form.image }}
+                {% if form.image.help_text %}
+                    <p class="text-sm text-gray-500 mt-1">{{ form.image.help_text }}</p>
+                {% endif %}
+                {% if form.image.errors %}
+                    <p class="text-red-600 text-sm mt-1">{{ form.image.errors.0 }}</p>
+                {% endif %}
+            </div>
+            
+            <div class="mb-6">
+                <label class="block text-gray-700 font-bold mb-2">
+                    <i class="fa fa-align-left"></i> {{ form.small_description.label }} *
+                </label>
+                {{ form.small_description }}
+                {% if form.small_description.help_text %}
+                    <p class="text-sm text-gray-500 mt-1">{{ form.small_description.help_text }}</p>
+                {% endif %}
+                {% if form.small_description.errors %}
+                    <p class="text-red-600 text-sm mt-1">{{ form.small_description.errors.0 }}</p>
+                {% endif %}
+            </div>
+            
+            <div class="mb-6">
+                <label class="block text-gray-700 font-bold mb-2">
+                    <i class="fa fa-clock-o"></i> {{ form.estimated_prep_time.label }} *
+                </label>
+                {{ form.estimated_prep_time }}
+                {% if form.estimated_prep_time.help_text %}
+                    <p class="text-sm text-gray-500 mt-1">{{ form.estimated_prep_time.help_text }}</p>
+                {% endif %}
+                {% if form.estimated_prep_time.errors %}
+                    <p class="text-red-600 text-sm mt-1">{{ form.estimated_prep_time.errors.0 }}</p>
+                {% endif %}
+            </div>
+            
+            <div class="mb-6">
+                <label class="block text-gray-700 font-bold mb-2">
+                    <i class="fa fa-list-ul"></i> {{ form.ingredients_list.label }} *
+                </label>
+                {{ form.ingredients_list }}
+                {% if form.ingredients_list.help_text %}
+                    <p class="text-sm text-gray-500 mt-1">{{ form.ingredients_list.help_text }}</p>
+                {% endif %}
+                {% if form.ingredients_list.errors %}
+                    <p class="text-red-600 text-sm mt-1">{{ form.ingredients_list.errors.0 }}</p>
+                {% endif %}
+            </div>
+            
+            <div class="mb-6">
+                <label class="block text-gray-700 font-bold mb-2">
+                    <i class="fa fa-tasks"></i> {{ form.process.label }} *
+                </label>
+                {{ form.process }}
+                {% if form.process.help_text %}
+                    <p class="text-sm text-gray-500 mt-1">{{ form.process.help_text }}</p>
+                {% endif %}
+                {% if form.process.errors %}
+                    <p class="text-red-600 text-sm mt-1">{{ form.process.errors.0 }}</p>
+                {% endif %}
+            </div>
+            
+            <div class="flex gap-4">
+                <button 
+                    type="submit"
+                    class="flex-1 bg-yellow-500 text-red-800 py-3 px-6 rounded-lg font-bold hover:bg-yellow-600 transition"
+                >
+                    {% if is_edit %}
+                        <i class="fa fa-save"></i> Update Recipe
+                    {% else %}
+                        <i class="fa fa-plus-circle"></i> Create Recipe
+                    {% endif %}
+                </button>
+                
+                <a 
+                    href="{% if is_edit %}/recipes/{{ recipe.id }}/{% else %}/{% endif %}" 
+                    class="flex-1 bg-gray-300 text-gray-800 py-3 px-6 rounded-lg font-bold hover:bg-gray-400 transition text-center"
+                >
+                    <i class="fa fa-times"></i> Cancel
+                </a>
+            </div>
+        </form>
+    </div>
+</div>
+{% endblock %}

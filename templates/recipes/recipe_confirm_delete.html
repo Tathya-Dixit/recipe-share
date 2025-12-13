@@ -1,0 +1,63 @@
+{% extends 'base.html' %}
+
+{% block title %}Delete {{ recipe.title }} - RecipeShare{% endblock %}
+
+{% block content %}
+<div class="max-w-2xl mx-auto">
+    <div class="bg-white rounded-lg shadow-lg p-8">
+        <div class="text-center mb-6">
+            <i class="fa fa-exclamation-triangle text-red-600" style="font-size: 72px;"></i>
+        </div>
+        
+        <h1 class="text-3xl font-bold text-red-800 mb-4 text-center">Delete Recipe?</h1>
+        
+        <div class="bg-gray-50 p-6 rounded-lg mb-6">
+            <div class="flex items-center space-x-4">
+                {% if recipe.image %}
+                    <img src="{{ recipe.image.url }}" alt="{{ recipe.title }}" class="w-24 h-24 object-cover rounded-lg">
+                {% else %}
+                    <div class="w-24 h-24 bg-gray-300 rounded-lg flex items-center justify-center">
+                        <i class="fa fa-cutlery text-gray-500" style="font-size: 32px;"></i>
+                    </div>
+                {% endif %}
+                
+                <div>
+                    <h2 class="text-xl font-bold text-gray-800">{{ recipe.title }}</h2>
+                    <p class="text-gray-600">{{ recipe.small_description|truncatewords:15 }}</p>
+                    <p class="text-sm text-gray-500 mt-1">
+                        <i class="fa fa-star text-yellow-500"></i> {{ recipe.average_rating }} 
+                        ({{ recipe.total_reviews }} reviews)
+                    </p>
+                </div>
+            </div>
+        </div>
+        
+        <div class="bg-red-50 border-l-4 border-red-500 p-4 mb-6">
+            <p class="text-red-800">
+                <i class="fa fa-warning"></i> 
+                <strong>Warning:</strong> This action cannot be undone. All reviews and ratings for this recipe will also be deleted.
+            </p>
+        </div>
+        
+        <form method="POST" class="space-y-4">
+            {% csrf_token %}
+            
+            <div class="flex gap-4">
+                <button 
+                    type="submit"
+                    class="flex-1 bg-red-600 text-white py-3 px-6 rounded-lg font-bold hover:bg-red-700 transition"
+                >
+                    <i class="fa fa-trash"></i> Yes, Delete Recipe
+                </button>
+                
+                <a 
+                    href="/recipes/{{ recipe.id }}/" 
+                    class="flex-1 bg-gray-300 text-gray-800 py-3 px-6 rounded-lg font-bold hover:bg-gray-400 transition text-center"
+                >
+                    <i class="fa fa-times"></i> Cancel
+                </a>
+            </div>
+        </form>
+    </div>
+</div>
+{% endblock %}
