@@ -81,7 +81,6 @@ def deleteReviewView(request, recipe_id):
 def createRecipeView(request):
     if request.method == 'POST':
         recipe_form = RecipeForm(request.POST, request.FILES)
-
         if recipe_form.is_valid():
             recipe = recipe_form.save(commit = False)
             recipe.author = request.user
@@ -89,8 +88,6 @@ def createRecipeView(request):
 
             messages.success(request, 'Your Recipe has been successfully submitted. It will be published once it is verified.')#will add verification functionality later on when mvp is working
             return redirect('recipe_detail', recipe_id = recipe.id)
-        else:
-            messages.error(request, 'Please fix the errors highlighted in red below.')
     else:
         recipe_form = RecipeForm()
     
