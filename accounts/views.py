@@ -2,8 +2,9 @@ from django.shortcuts import render,redirect
 from django.contrib.auth import login, authenticate, logout
 from django.contrib.auth.decorators import login_required
 from django.contrib import messages
-from accounts.models import User
 
+from accounts.models import User
+from accounts.forms import ProfileForm
 
 def registerView(request):
     if request.user.is_authenticated:
@@ -83,3 +84,20 @@ def profileView(request):
     }
 
     return render(request, 'accounts/profile.html', context)
+
+
+@login_required
+def editProfileView(request):
+    
+    if request.method == 'POST':
+        profile_form = ProfileForm(request.POST, request.FILES, instance = request.user)
+
+        if profile_form.is_valid():
+            profile_form.save()
+            messages.success(request, 'Profile Successfully Updated')
+            return redirect('profile')
+    else:
+        profile_form = ProfileForm(instance = request.user)
+    
+    return render(request, 'accounts/edit_profile.html', {'form' : profile_form})
+
