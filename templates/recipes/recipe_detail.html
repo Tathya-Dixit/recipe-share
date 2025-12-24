@@ -10,11 +10,9 @@
     
     <div class="bg-white rounded-lg shadow-lg overflow-hidden mb-6">
         {% if recipe.image %}
-            <img src="{{ recipe.image.url }}" alt="{{ recipe.title }}" class="w-full h-96 object-cover">
+            <img src="{{ recipe.image.url }}" alt="{{ recipe.title }}" class="w-full h-56 object-cover">
         {% else %}
-            <div class="w-full h-96 bg-gradient-to-br from-yellow-400 to-red-600 flex items-center justify-center">
-                <i class="fa fa-cutlery text-white" style="font-size: 96px;"></i>
-            </div>
+            <img src="https://placehold.co/600x400/FBBF24/991B1B?text={{ recipe.title|slice:':15' }}" alt="{{ recipe.title }}" class="w-full h-56 object-cover">
         {% endif %}
         
         <div class="p-8">

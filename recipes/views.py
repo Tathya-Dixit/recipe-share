@@ -1,6 +1,7 @@
 from django.shortcuts import render, get_object_or_404, redirect
 from django.contrib.auth.decorators import login_required
 from django.db.models import Q
+from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 from django.contrib import messages
 
 from recipes.models import Recipe, Review
@@ -18,9 +19,20 @@ def homeView(request):
     
     recipes = recipes.order_by('-created_at')
     
+    paginator = Paginator(recipes, 9)
+    page_number = request.GET.get('page', 1)
+
+    try:
+        page_obj = paginator.get_page(page_number)
+    except PageNotAnInteger:
+        page_obj = paginator.get_page(1)
+    except EmptyPage:
+        page_obj = paginator.get_page(paginator.num_pages)
+
     context = {
-        'recipes': recipes,
-        'total_recipes': recipes.count(),
+        'recipes': page_obj,
+        'page_obj': page_obj,
+        'total_recipes': paginator.count,
         'search_query': search_query,
     }
     return render(request, 'recipes/home.html', context)

@@ -30,7 +30,7 @@
 
 <!-- Recipe Grid -->
 {% if recipes %}
-    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-8">
         {% for recipe in recipes %}
             <div class="bg-white rounded-lg shadow-lg overflow-hidden hover:shadow-2xl transition transform hover:-translate-y-1">
                 {% if recipe.image %}
@@ -67,6 +67,62 @@
             </div>
         {% endfor %}
     </div>
+
+    <!-- Pagination Controls -->
+    {% if page_obj.paginator.num_pages > 1 %}
+    <div class="bg-white rounded-lg shadow-lg p-6">
+        <div class="flex items-center justify-between">
+            <!-- Previous Button -->
+            <div>
+                {% if page_obj.has_previous %}
+                    <a href="?page={{ page_obj.previous_page_number }}{% if search_query %}&search={{ search_query }}{% endif %}" 
+                       class="bg-yellow-500 text-red-800 px-6 py-3 rounded-lg font-bold hover:bg-yellow-600 transition inline-flex items-center">
+                        <i class="fa fa-arrow-left mr-2"></i> Previous
+                    </a>
+                {% else %}
+                    <span class="bg-gray-300 text-gray-500 px-6 py-3 rounded-lg font-bold cursor-not-allowed inline-flex items-center">
+                        <i class="fa fa-arrow-left mr-2"></i> Previous
+                    </span>
+                {% endif %}
+            </div>
+            
+            <!-- Page Info -->
+            <div class="text-gray-700 font-bold">
+                Page {{ page_obj.number }} of {{ page_obj.paginator.num_pages }}
+                <span class="text-gray-500 text-sm ml-2">({{ total_recipes }} total)</span>
+            </div>
+            
+            <!-- Next Button -->
+            <div>
+                {% if page_obj.has_next %}
+                    <a href="?page={{ page_obj.next_page_number }}{% if search_query %}&search={{ search_query }}{% endif %}" 
+                       class="bg-yellow-500 text-red-800 px-6 py-3 rounded-lg font-bold hover:bg-yellow-600 transition inline-flex items-center">
+                        Next <i class="fa fa-arrow-right ml-2"></i>
+                    </a>
+                {% else %}
+                    <span class="bg-gray-300 text-gray-500 px-6 py-3 rounded-lg font-bold cursor-not-allowed inline-flex items-center">
+                        Next <i class="fa fa-arrow-right ml-2"></i>
+                    </span>
+                {% endif %}
+            </div>
+        </div>
+        
+        <!-- Page Numbers (for larger screens) -->
+        <div class="hidden md:flex justify-center mt-4 space-x-2">
+            {% for num in page_obj.paginator.page_range %}
+                {% if page_obj.number == num %}
+                    <span class="bg-red-800 text-white px-4 py-2 rounded-lg font-bold">{{ num }}</span>
+                {% elif num > page_obj.number|add:'-3' and num < page_obj.number|add:'3' %}
+                    <a href="?page={{ num }}{% if search_query %}&search={{ search_query }}{% endif %}" 
+                       class="bg-gray-200 text-gray-800 px-4 py-2 rounded-lg font-bold hover:bg-gray-300 transition">
+                        {{ num }}
+                    </a>
+                {% endif %}
+            {% endfor %}
+        </div>
+    </div>
+    {% endif %}
+
 {% else %}
     <!-- No Results / Empty State -->
     <div class="text-center py-20 bg-white rounded-lg shadow-lg">
