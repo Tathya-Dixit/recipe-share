@@ -3,12 +3,32 @@
 {% block title %}Recipe Feed - RecipeShare{% endblock %}
 
 {% block content %}
+<!-- Header -->
 <div class="mb-8">
-    <h1 class="text-5xl font-bold text-red-800 mb-2">Discover Recipes</h1>
-    <p class="text-gray-600 text-lg">{{ total_recipes }} delicious recipes shared by our community</p>
+    <h1 class="text-5xl font-bold text-red-800 mb-2">
+        {% if search_query %}
+            Search Results for "{{ search_query }}"
+        {% else %}
+            Discover Recipes
+        {% endif %}
+    </h1>
+    <p class="text-gray-600 text-lg">
+        {{ total_recipes }} 
+        {% if search_query %}
+            recipe{{ total_recipes|pluralize }} found
+        {% else %}
+            delicious recipe{{ total_recipes|pluralize }} shared by our community
+        {% endif %}
+    </p>
+    
+    {% if search_query %}
+    <a href="/" class="inline-block mt-3 text-red-800 hover:underline font-bold">
+        <i class="fa fa-arrow-left"></i> Clear search & show all recipes
+    </a>
+    {% endif %}
 </div>
 
-
+<!-- Recipe Grid -->
 {% if recipes %}
     <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
         {% for recipe in recipes %}
@@ -48,11 +68,29 @@
         {% endfor %}
     </div>
 {% else %}
+    <!-- No Results / Empty State -->
     <div class="text-center py-20 bg-white rounded-lg shadow-lg">
-        <i class="fa fa-cutlery text-gray-300" style="font-size: 96px;"></i>
-        <h2 class="text-3xl font-bold text-gray-700 mt-6 mb-4">No recipes yet!</h2>
-        <p class="text-gray-600 mb-6">Be the first to share a delicious recipe with the community.</p>
-        {% if user.is_authenticated %}
+        <i class="fa fa-{% if search_query %}search{% else %}cutlery{% endif %} text-gray-300" style="font-size: 96px;"></i>
+        <h2 class="text-3xl font-bold text-gray-700 mt-6 mb-4">
+            {% if search_query %}
+                No recipes found for "{{ search_query }}"
+            {% else %}
+                No recipes yet!
+            {% endif %}
+        </h2>
+        <p class="text-gray-600 mb-6">
+            {% if search_query %}
+                Try different keywords or browse all recipes.
+            {% else %}
+                Be the first to share a delicious recipe with the community.
+            {% endif %}
+        </p>
+        
+        {% if search_query %}
+            <a href="/" class="bg-yellow-500 text-red-800 px-8 py-3 rounded-lg font-bold hover:bg-yellow-600 inline-block">
+                <i class="fa fa-arrow-left"></i> Show All Recipes
+            </a>
+        {% elif user.is_authenticated %}
             <a href="/recipes/create/" class="bg-yellow-500 text-red-800 px-8 py-3 rounded-lg font-bold hover:bg-yellow-600 inline-block">
                 <i class="fa fa-plus-circle"></i> Create First Recipe
             </a>

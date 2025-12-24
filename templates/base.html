@@ -17,6 +17,23 @@
                         <a href="/" class="text-3xl font-bold text-red-800">Recipe Share</a>
                     </div>
                     
+                    <!-- Search Bar (center) - Only on larger screens -->
+                    <div class="hidden md:block flex-1 max-w-xl mx-8">
+                        <form method="GET" action="/" class="relative">
+                            <input 
+                                type="text" 
+                                name="search" 
+                                value="{{ request.GET.search }}"
+                                placeholder="Search recipes..."
+                                class="bg-yellow-600 w-full px-4 py-2 pr-10 rounded-lg focus:outline-none focus:ring-2 focus:ring-red-800"
+                            >
+                            <button type="submit" class="absolute right-2 top-1/2 transform -translate-y-1/2 text-red-800 hover:text-red-900">
+                                <i class="fa fa-search" style="font-size: 18px;"></i>
+                            </button>
+                        </form>
+                    </div>
+                    
+                    <!-- Navigation Icons -->
                     <div class="flex items-center space-x-6">
                         {% if user.is_authenticated %}
                             <a href="/" class="text-gray-800 hover:text-red-800" title="Home">
@@ -44,9 +61,25 @@
                         {% endif %}
                     </div>
                 </div>
+                
+                <!-- Mobile Search Bar (below navbar on small screens) -->
+                <div class="md:hidden pb-3">
+                    <form method="GET" action="/" class="relative">
+                        <input 
+                            type="text" 
+                            name="search" 
+                            value="{{ request.GET.search }}"
+                            placeholder="Search recipes..."
+                            class="bg-yellow-600 w-full px-4 py-2 pr-10 rounded-lg focus:outline-none focus:ring-2 focus:ring-red-800"
+                        >
+                        <button type="submit" class="absolute right-2 top-1/2 transform -translate-y-1/2 text-red-800 hover:text-red-900">
+                            <i class="fa fa-search" style="font-size: 18px;"></i>
+                        </button>
+                    </form>
+                </div>
             </div>
         </nav>
-
+        
         {% if messages %}
             <div class="max-w-7xl mx-auto px-4 mt-4 w-full">
                 {% for message in messages %}

@@ -1,5 +1,6 @@
 from django.shortcuts import render, get_object_or_404, redirect
 from django.contrib.auth.decorators import login_required
+from django.db.models import Q
 from django.contrib import messages
 
 from recipes.models import Recipe, Review
@@ -7,9 +8,20 @@ from recipes.forms import RecipeForm
 
 def homeView(request):
     recipes = Recipe.objects.all()
+
+    search_query = request.GET.get('search', '').strip()
+    if search_query:
+        recipes = recipes.filter(
+            Q(title__icontains=search_query) | 
+            Q(ingredients_list__icontains=search_query)
+        )
+    
+    recipes = recipes.order_by('-created_at')
+    
     context = {
         'recipes': recipes,
         'total_recipes': recipes.count(),
+        'search_query': search_query,
     }
     return render(request, 'recipes/home.html', context)
 
