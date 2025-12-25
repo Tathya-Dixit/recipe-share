@@ -56,9 +56,9 @@
                     </div>
                     
                     <div class="flex items-center justify-between border-t pt-3">
-                        <span class="text-sm text-gray-600">
+                        <a href="/user/{{ recipe.author.username }}/" class="text-sm text-red-800 hover:underline font-bold">
                             <i class="fa fa-user-circle"></i> {{ recipe.author.username }}
-                        </span>
+                        </a>
                         <a href="/recipes/{{ recipe.id }}/" class="bg-yellow-500 text-red-800 px-4 py-2 rounded font-bold hover:bg-yellow-600 transition">
                             View Recipe
                         </a>

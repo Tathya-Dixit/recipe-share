@@ -1,4 +1,4 @@
-from django.shortcuts import render,redirect
+from django.shortcuts import render,redirect, get_object_or_404
 from django.contrib.auth import login, authenticate, logout
 from django.contrib.auth.decorators import login_required
 from django.contrib import messages
@@ -101,3 +101,15 @@ def editProfileView(request):
     
     return render(request, 'accounts/edit_profile.html', {'form' : profile_form})
 
+def publicProfileView(request, username):
+    user = get_object_or_404(User, username = username)
+    user_recipes = user.recipes.all()
+
+    context = {
+        'profile_user': user,
+        'recipes': user_recipes,
+        'total_recipes': user_recipes.count(),
+        'is_own_profile': request.user == user,
+    }
+    
+    return render(request, 'accounts/public_profile.html', context)
