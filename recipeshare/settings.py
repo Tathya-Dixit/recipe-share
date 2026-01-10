@@ -40,8 +40,8 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'cloudinary_storage',
-    'cloudinary',
     'django.contrib.staticfiles',
+    'cloudinary',
     'accounts',
     'recipes',
 ]
@@ -136,7 +136,15 @@ STATIC_ROOT = BASE_DIR / 'staticfiles'
 STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
 
 MEDIA_URL = '/media/'
-MEDIA_ROOT = BASE_DIR/'media'
+if IS_PRODUCTION:
+    cloudinary.config(
+        cloud_name = os.environ.get('CLOUDINARY_CLOUD_NAME'),
+        api_key = os.environ.get('CLOUDINARY_API_KEY'),
+        api_secret = os.environ.get('CLOUDINARY_API_SECRET'),
+    )
+    DEFAULT_FILE_STORAGE = 'cloudinary_storage.storage.MediaCloudinaryStorage'
+else:
+    MEDIA_ROOT = BASE_DIR/'media'
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/5.2/ref/settings/#default-auto-field
@@ -159,10 +167,3 @@ if not DEBUG:
     X_FRAME_OPTIONS = 'DENY'
 
 
-if IS_PRODUCTION:
-    cloudinary.config(
-        cloud_name = os.environ.get('CLOUDINARY_CLOUD_NAME'),
-        api_key = os.environ.get('CLOUDINARY_API_KEY'),
-        api_secret = os.environ.get('CLOUDINARY_API_SECRET'),
-    )
-    DEFAULT_FILE_STORAGE = 'cloudinary_storage.storage.MediaCloudinaryStorage'
