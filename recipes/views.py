@@ -158,3 +158,5 @@ def deleteRecipeView(request, recipe_id):
         return redirect('home_page')
     return render(request, 'recipes/recipe_confirm_delete.html', {'recipe' : recipe})
 
+
+
